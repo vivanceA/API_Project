@@ -1,0 +1,60 @@
+import requests
+
+# Replace 'YOUR_API_KEY' with your actual NewsAPI key
+api_key = '9ea9960aac454f649e6fa5d78e9343be'
+
+def fetch_news(country='us'):
+    api_url = f'https://newsapi.org/v2/top-headlines?country={country}&apiKey={api_key}'
+    
+    try:
+        response = requests.get(api_url)
+
+        if response.status_code == 200:
+            data = response.json()
+            articles = data.get('articles', [])
+            return articles
+
+        else:
+            print(f"Error fetching data. Status code: {response.status_code}")
+            return []
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error: {e}")
+        return []
+
+def display_news(articles):
+    for index, article in enumerate(articles, start=1):
+        title = article.get('title', 'No Title')
+        description = article.get('description', 'No Description')
+        url = article.get('url', '#')
+
+        print(f"{index}. Title: {title}")
+        print(f"   Description: {description}")
+        print(f"   URL: {url}\n")
+
+def main():
+    print("Welcome to the News App!")
+    
+    while True:
+        print("\nMenu:")
+        print("1. Fetch and display news (default: US)")
+        print("2. Fetch and display news from a different country")
+        print("3. Exit")
+
+        choice = input("Enter your choice: ")
+
+        if choice == '1':
+            articles = fetch_news()
+            display_news(articles)
+        elif choice == '2':
+            country = input("Enter the country code (e.g., 'us', 'gb'): ")
+            articles = fetch_news(country)
+            display_news(articles)
+        elif choice == '3':
+            print("Goodbye!")
+            break
+        else:
+            print("Invalid choice. Please enter a valid option.")
+
+if __name__ == "__main__":
+    main()
